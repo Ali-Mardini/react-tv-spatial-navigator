@@ -5,21 +5,27 @@
   "module": "esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-   "build": "tsc && rollup -c",
-   "prepare": "npm run build"
+    "build": "echo test"
   },
-  "keywords": ["react-native", "expo", "tv", "navigation", "spatial"],
+  "keywords": [
+    "react-native",
+    "expo",
+    "tv",
+    "navigation",
+    "spatial"
+  ],
   "author": "Ali Mardini",
   "license": "ISC",
   "description": "A spatial navigation library for React Native TV and Expo SDK 52",
   "dependencies": {
     "expo": "52.0.46",
-    "react": "18.3.1",
+    "react": "^18.3.1",
     "react-native": "0.76.9"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
+    "@types/react": "^18.3.20",
     "rollup": "^4.40.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.8.3"
