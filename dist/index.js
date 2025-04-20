@@ -4,29 +4,62 @@ var React = require('react');
 var reactNative = require('react-native');
 
 const SpatialContext = React.createContext(null);
-const SpatialNavigationRoot$1 = ({ children, ...props }) => {
-    const nodes = React.useRef(new Map());
-    const value = {
-        registerNode: (id, ref) => nodes.current.set(id, ref),
-        unregisterNode: (id) => nodes.current.delete(id),
-        focusNode: (id) => {
-            var _a;
-            const target = nodes.current.get(id);
-            if ((_a = target === null || target === void 0 ? void 0 : target.current) === null || _a === void 0 ? void 0 : _a.focus)
-                target.current.focus();
+const SpatialNavigationRoot$1 = ({ children, style, ...props }) => {
+    const [nodes, setNodes] = React.useState(new Map());
+    const [focusedNode, setFocusedNode] = React.useState(null);
+    const registerNode = (id, ref) => {
+        setNodes((prev) => new Map(prev).set(id, ref));
+    };
+    const unregisterNode = (id) => {
+        setNodes((prev) => {
+            const copy = new Map(prev);
+            copy.delete(id);
+            return copy;
+        });
+    };
+    const focusNode = (id) => {
+        const ref = nodes.get(id);
+        if ((ref === null || ref === void 0 ? void 0 : ref.current) && typeof ref.current.focus === 'function') {
+            ref.current.focus();
+            setFocusedNode(id);
         }
     };
-    return (React.createElement(SpatialContext.Provider, { value: value },
-        React.createElement(reactNative.View, { ...props }, children)));
+    // Handle left/right (or up/down) to move focus in registration order
+    const handleTVEvent = (event) => {
+        if (!reactNative.Platform.isTV || !event.eventType || !focusedNode)
+            return;
+        const ids = Array.from(nodes.keys());
+        const idx = ids.indexOf(focusedNode);
+        let nextIndex = idx;
+        switch (event.eventType) {
+            case 'right':
+            case 'down':
+                nextIndex = (idx + 1) % ids.length;
+                break;
+            case 'left':
+            case 'up':
+                nextIndex = (idx - 1 + ids.length) % ids.length;
+                break;
+            default:
+                return;
+        }
+        focusNode(ids[nextIndex]);
+    };
+    // Wire up the TV remote events
+    reactNative.useTVEventHandler(handleTVEvent);
+    // Optionally auto-focus the first node when it appears
+    React.useEffect(() => {
+        if (!focusedNode && nodes.size > 0) {
+            const firstNode = nodes.keys().next().value;
+            if (firstNode) {
+                focusNode(firstNode);
+            }
+        }
+    }, [nodes]);
+    return (React.createElement(SpatialContext.Provider, { value: { registerNode, unregisterNode, focusNode, focusedNode } },
+        React.createElement(reactNative.View, { style: style, ...props }, children)));
 };
 
-// src/SpatialNavigationNode.tsx
-/**
- * A focusable node component that:
- *  - Registers itself in the SpatialContext
- *  - Scales up, adds a shadow and merges in `focusStyle` when focused on TV
- *  - Falls back to a plain View on non-TV platforms
- */
 const SpatialNavigationNode$1 = ({ nodeId, children, style, focusStyle, ...props }) => {
     const ref = React.useRef(null);
     const ctx = React.useContext(SpatialContext);
@@ -34,12 +67,12 @@ const SpatialNavigationNode$1 = ({ nodeId, children, style, focusStyle, ...props
     React.useEffect(() => {
         ctx === null || ctx === void 0 ? void 0 : ctx.registerNode(nodeId, ref);
         return () => ctx === null || ctx === void 0 ? void 0 : ctx.unregisterNode(nodeId);
-    }, [nodeId, ctx]);
-    // Non-TV: just render a regular View
+    }, [nodeId]);
+    // Non‑TV: just render a plain View
     if (!reactNative.Platform.isTV) {
         return (React.createElement(reactNative.View, { ref: ref, style: style, ...props }, children));
     }
-    // TV: make the View focusable and style on focus
+    // TV: make it focusable and apply visuals on focus
     return (React.createElement(reactNative.View, { ref: ref, focusable: true, style: [
             style,
             isFocused && focusStyle,

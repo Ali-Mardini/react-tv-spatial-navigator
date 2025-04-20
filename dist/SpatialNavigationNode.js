@@ -1,13 +1,6 @@
-// src/SpatialNavigationNode.tsx
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, } from 'react-native';
 import { SpatialContext } from './SpatialNavigationRoot';
-/**
- * A focusable node component that:
- *  - Registers itself in the SpatialContext
- *  - Scales up, adds a shadow and merges in `focusStyle` when focused on TV
- *  - Falls back to a plain View on non-TV platforms
- */
 export const SpatialNavigationNode = ({ nodeId, children, style, focusStyle, ...props }) => {
     const ref = useRef(null);
     const ctx = useContext(SpatialContext);
@@ -15,12 +8,12 @@ export const SpatialNavigationNode = ({ nodeId, children, style, focusStyle, ...
     useEffect(() => {
         ctx === null || ctx === void 0 ? void 0 : ctx.registerNode(nodeId, ref);
         return () => ctx === null || ctx === void 0 ? void 0 : ctx.unregisterNode(nodeId);
-    }, [nodeId, ctx]);
-    // Non-TV: just render a regular View
+    }, [nodeId]);
+    // Non‑TV: just render a plain View
     if (!Platform.isTV) {
         return (React.createElement(View, { ref: ref, style: style, ...props }, children));
     }
-    // TV: make the View focusable and style on focus
+    // TV: make it focusable and apply visuals on focus
     return (React.createElement(View, { ref: ref, focusable: true, style: [
             style,
             isFocused && focusStyle,
