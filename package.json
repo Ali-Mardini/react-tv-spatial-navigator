@@ -1,11 +1,12 @@
 {
-  "name": "tv-spatial-navigator",
-  "version": "1.0.0",
+  "name": "react-tv-spatial-navigator",
+  "version": "1.0.5",
   "main": "dist/index.js",
+  "react-native": "index.native.js",
   "module": "esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "echo test"
+    "build": "tsc && rollup -c"
   },
   "keywords": [
     "react-native",
@@ -20,7 +21,7 @@
   "dependencies": {
     "expo": "52.0.46",
     "react": "^18.3.1",
-    "react-native": "0.76.9"
+    "react-native": "npm:react-native-tvos@0.77.2-0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",

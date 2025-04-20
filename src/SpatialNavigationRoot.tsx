@@ -1,7 +1,7 @@
 import React, { createContext, useRef } from 'react';
 import { View, ViewProps } from 'react-native';
 
-interface RootContextProps {
+export interface RootContextProps {
   registerNode: (id: string, ref: React.RefObject<any>) => void;
   unregisterNode: (id: string) => void;
   focusNode: (id: string) => void;
