@@ -1,0 +1,35 @@
+{
+  "name": "mytvproject",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "cross-env EXPO_TV=1 expo start -c",
+    "android": "cross-env EXPO_TV=1 expo run:android",
+    "ios": "cross-env EXPO_TV=1 expo run:ios",
+    "web": "expo start --web",
+    "prebuild": "cross-env EXPO_TV=1 expo prebuild -p android --clean"
+  },
+  "dependencies": {
+    "expo": "~52.0.42",
+    "expo-splash-screen": "~0.29.23",
+    "expo-status-bar": "~2.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "npm:react-native-tvos@~0.76.6-0",
+    "react-tv-spatial-navigator": "^1.0.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@react-native-tvos/config-tv": "^0.1.1",
+    "@types/react": "~18.3.12",
+    "cross-env": "^7.0.3",
+    "typescript": "~5.3.3"
+  },
+  "expo": {
+    "install": {
+      "exclude": [
+        "react-native"
+      ]
+    }
+  },
+  "private": true
+}
